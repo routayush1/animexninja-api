@@ -160,20 +160,21 @@ app.get('/watching/:id/:episode', (req, res) => {
         if (!err) {
             try {
                 var $ = cheerio.load(html)
+                if ($('.entry-title').text()==='404'){return res.status(404).json({links:[],link})}
+
                 link = $('li.anime').children('a').attr('data-video')
-                console.log(link)
+
                 nl = async () => {
                     const scrapp = await new VidstreamingScraper().scrap("http:" + link);
                     if (scrapp.success) {
-                        console.log(scrapp.data.sources);
-                        res.status(200).json({ links: scrapp.data.sources, link })
+                       return res.status(200).json({ links: scrapp.data.sources, link })
                     }
-                    return { empty: "empty" }
+                    return res.status(200).json({ link })
                 }
                 nl()
             }
             catch (e) {
-                res.status(404).json({ e: '404 fuck off!!!!!' })
+                res.status(404).json({ links:[],link:''})
             }
         }
     })
