@@ -1,9 +1,9 @@
-const app = require('express')()
-const { v4 } = require('uuid')
+const app = require("express")();
+const { v4 } = require("uuid");
 const cheerio = require("cheerio");
 const cors = require("cors");
 const rs = require("request");
-const port=5000
+const port = 5000;
 
 app.use(cors());
 
@@ -11,14 +11,14 @@ const baseURL = "https://gogoanime.so/";
 
 app.get("/api/home", (req, res) => {
   let info = {
-    popular: "https://anime-x.herokuapp.com/popular/:page",
-    details: "https://anime-x.herokuapp.com/details/:id",
-    search: "https://anime-x.herokuapp.com/search/:word/:page",
-    "episode-link": "https://anime-x.herokuapp.com/watching/:id/:episode",
-    genre: "https://anime-x.herokuapp.com/genre/:type/:page",
-    "recently added": "https://anime-x.herokuapp.com/recentlyadded/:page",
-    "anime-list": "https://anime-x.herokuapp.com/list/:page",
-    genrelist: "https://anime-x.herokuapp.com/genrelist",
+    popular: "https://anime-x.vercel.app/api/popular/:page",
+    details: "https://anime-x.vercel.app/api/details/:id",
+    search: "https://anime-x.vercel.app/api/search/:word/:page",
+    episode_link: "https://anime-x.vercel.app/api/watching/:id/:episode",
+    genre: "https://anime-x.vercel.app/api/genre/:type/:page",
+    recently_added: "https://anime-x.vercel.app/api/recentlyadded/:page",
+    anime_list: "https://anime-x.vercel.app/api/list/:page",
+    genrelist: "https://anime-x.vercel.app/api/genrelist",
   };
   res.send(info);
 });
@@ -317,6 +317,6 @@ app.get("/api/list/:variable/:page", (req, res) => {
   });
 });
 
-app.listen(port,()=>console.log("running on 5000"))
+app.listen(port, () => console.log("running on 5000"));
 
-module.exports = app
+module.exports = app;
