@@ -36,6 +36,3 @@ Please make sure to update tests as appropriate.
 - **Ayush kumar Rout** - _Development_ - [AyushRout](https://github.com/routayush1)
 - **Gaurav** - _Development_ - [Gaurav](https://github.com/gauravdh9)
 - **Soham Singh Yadav** - _Development_ - [SohamSingh](https://github.com/sohamsingh29)
-
-## License
-[MIT](https://choosealicense.com/licenses/mit/)
