@@ -77,11 +77,6 @@ app.get("/api/details/:id", (req, res) => {
           } else if ("Genre: " == $(this).children("span").text()) {
             genres = $(this).text().slice(20, -4);
             genres = genres.split(",");
-
-            genres = genres.filter((word) => word != " Ecchi");
-            genres = genres.filter((word) => word != " Harem");
-            genres = genres.filter((word) => word != "Ecchi");
-            genres = genres.filter((word) => word != "Harem");
             genres = genres.join(",");
           } else "Other name: " == $(this).children("span").text();
           {
@@ -270,8 +265,7 @@ app.get("/api/genrelist", (req, res) => {
             list[index] = $(this).text();
           });
 
-        list = list.filter((word) => word != "Ecchi");
-        list = list.filter((word) => word != "Harem");
+ 
 
         res.status(200).json({ list });
       } catch (e) {
