@@ -172,7 +172,10 @@ app.get("/api/watching/:id/:episode", (req, res) => {
               var $ = cheerio.load(html);
               $("a").each((i, e) => {
                 if (e.attribs.download === "") {
-                  nl.push(e.attribs.href);
+                  nl.push({
+                    link: e.attribs.href,
+                    name: e.children[0].data.slice(21),
+                  });
                 }
               });
               return res.status(200).json({ links: nl, link });
@@ -264,8 +267,6 @@ app.get("/api/genrelist", (req, res) => {
           .each(function (index, element) {
             list[index] = $(this).text();
           });
-
- 
 
         res.status(200).json({ list });
       } catch (e) {
