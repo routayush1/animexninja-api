@@ -1,7 +1,5 @@
 # Anime Web Api with Express .
 
-
-## [Check it live here](https://anime-x.vercel.app/api/home)
 This api is based on [gogoanime](https://www18.gogoanime.io/)
 An Anime Streaming web api to give you a better experience for your web app.
 
@@ -15,6 +13,7 @@ Clone the Repository and run
 
 ```
 npm install
+cd api
 node api
 ```
 
