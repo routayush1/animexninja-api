@@ -1,5 +1,5 @@
 {
-    "rewrites": [{ "source": "/api/(.*)", "destination": "/api" }].
+    "rewrites": [{ "source": "/api/(.*)", "destination": "/api" }],
     {
   "github": {
     "silent": true
