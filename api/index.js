@@ -189,8 +189,7 @@ app.get("/api/watching/:id/:episode", (req, res) => {
                     .replace(" - mp4", "");
                   nl.push({
                     src: e.attribs.href,
-                    type: "video/mp4",
-                    size: li == "HDP" ? "High Speed" : parseInt(li),
+                    size: li == "High Speed" ? "1080" : li,
                   });
                 }
               });
