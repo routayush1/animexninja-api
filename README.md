@@ -14,7 +14,6 @@ Clone the Repository and run
 
 ```
 npm install
-cd api
 node api
 ```
 
