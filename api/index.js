@@ -17,6 +17,8 @@ app.get("/api/home", (req, res) => {
     recently_added: "https://anime-x.vercel.app/api/recentlyadded/:page",
     anime_list: "https://anime-x.vercel.app/api/list/:page",
     genrelist: "https://anime-x.vercel.app/api/genrelist",
+    new_season: "https://anime-x.vercel.app/api/newseason/:page",
+    movies: "https://anime-x.vercel.app/api/movies/:page"
   };
   res.send(info);
 });
@@ -96,7 +98,7 @@ app.get("/api/details/:id", (req, res) => {
           genres,
           status,
           totalepisode,
-          Othername,
+          Othername
         };
         res.status(200).json({ results });
       } catch (e) {
@@ -189,7 +191,7 @@ app.get("/api/watching/:id/:episode", (req, res) => {
                     .replace(" - mp4", "");
                   nl.push({
                     src: e.attribs.href,
-                    size: li == "HDP" ? "High Speed" : li,
+                    size: li == "HDP" ? "High Speed" : li
                   });
                 }
               });
@@ -247,6 +249,74 @@ app.get("/api/recentlyadded/:page", (req, res) => {
     return res.status(404).json({ results });
   }
   url = `${baseURL}?page=${page}`;
+  rs(url, (err, resp, html) => {
+    if (!err) {
+      try {
+        var $ = cheerio.load(html);
+        $(".img").each(function (index, element) {
+          let title = $(this).children("a").attr().title;
+          let id = $(this).children("a").attr().href.slice(1);
+          let image = $(this).children("a").children("img").attr().src;
+          let episodenumber = $(this)
+            .parent()
+            .children("p.episode")
+            .text()
+            .replace(" ", "-")
+            .toLowerCase();
+          id = id.replace("-" + episodenumber, "");
+          episodenumber = episodenumber.replace("episode-", "");
+          results[index] = { title, id, image, episodenumber };
+        });
+
+        res.status(200).json({ results });
+      } catch (e) {
+        res.status(404).json({ e: "404 fuck off!!!!!" });
+      }
+    }
+  });
+});
+
+app.get("/api/newseason/:page", (req, res) => {
+  var page = req.params.page;
+  var results = [];
+  if (isNaN(page)) {
+    return res.status(404).json({ results });
+  }
+  url = `${baseURL}new-season.html?page=${page}`;
+  rs(url, (err, resp, html) => {
+    if (!err) {
+      try {
+        var $ = cheerio.load(html);
+        $(".img").each(function (index, element) {
+          let title = $(this).children("a").attr().title;
+          let id = $(this).children("a").attr().href.slice(1);
+          let image = $(this).children("a").children("img").attr().src;
+          let episodenumber = $(this)
+            .parent()
+            .children("p.episode")
+            .text()
+            .replace(" ", "-")
+            .toLowerCase();
+          id = id.replace("-" + episodenumber, "");
+          episodenumber = episodenumber.replace("episode-", "");
+          results[index] = { title, id, image, episodenumber };
+        });
+
+        res.status(200).json({ results });
+      } catch (e) {
+        res.status(404).json({ e: "404 fuck off!!!!!" });
+      }
+    }
+  });
+});
+
+app.get("/api/movies/:page", (req, res) => {
+  var page = req.params.page;
+  var results = [];
+  if (isNaN(page)) {
+    return res.status(404).json({ results });
+  }
+  url = `${baseURL}anime-movies.html?page=${page}`;
   rs(url, (err, resp, html) => {
     if (!err) {
       try {
