@@ -4,7 +4,19 @@ const cheerio = require("cheerio");
 const cors = require("cors");
 const rs = require("request");
 const port = 5000;
-app.use(cors());
+
+var whitelist = ["https://animex.ninja/"];
+var corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+};
+app.use(cors(corsOptions));
+
 const baseURL = "https://gogoanime.ai/";
 
 app.get("/api/home", (req, res) => {
