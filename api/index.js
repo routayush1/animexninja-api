@@ -5,11 +5,7 @@ const cors = require("cors");
 const rs = require("request");
 const port = 5000;
 
-var corsOptions = {
-  origin: "https://animex.ninja/",
-  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
-};
-app.use(cors(corsOptions));
+app.use(cors());
 
 const baseURL = "https://gogoanime.ai/";
 
