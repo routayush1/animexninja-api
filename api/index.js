@@ -3,11 +3,15 @@ const { v4 } = require("uuid");
 const cheerio = require("cheerio");
 const cors = require("cors");
 const rs = require("request");
+const puppeteer = require('puppeteer-extra')
+const StealthPlugin = require('puppeteer-extra-plugin-stealth')
+
 const port = 5000;
 
 app.use(cors());
+puppeteer.use(StealthPlugin())
 
-const baseURL = "https://gogoanime.ai/";
+const baseURL = "https://gogoanime.pe/";
 
 app.get("/api/home", (req, res) => {
   let info = {
@@ -178,34 +182,33 @@ app.get("/api/watching/:id/:episode", (req, res) => {
         totalepisode = totalepisode[totalepisode.length - 1];
         link = $("li.anime").children("a").attr("data-video");
         const cl = "http:" + link.replace("streaming.php", "download");
-        rs(cl, (err, resp, html) => {
-          if (!err) {
-            try {
-              var $ = cheerio.load(html);
-              $("a").each((i, e) => {
-                if (e.attribs.download === "") {
-                  var li = e.children[0].data
-                    .slice(21)
-                    .replace("(", "")
-                    .replace(")", "")
-                    .replace(" - mp4", "");
-                  nl.push({
-                    src: e.attribs.href,
-                    size: li == "HDP" ? "High Speed" : li,
-                  });
-                }
-              });
-              return res
-                .status(200)
-                .json({ links: nl, link, totalepisode: totalepisode });
-            } catch (e) {
-              return res
-                .status(200)
-                .json({ links: nl, link, totalepisode: totalepisode });
-            }
+        console.log(link)
+        puppeteer.launch({ headless: true }).then(async browser => {
+          const page = await browser.newPage()
+          await page.goto(cl)
+          await page.waitForTimeout(5000)
+          let html = await page.content()
+          var $ = cheerio.load(html);
+          $("a").each((i, e) => {
+            if (e.attribs.download === "") {
+              var li = e.children[0].data
+              .slice(21)
+              .replace("(", "")
+              .replace(")", "")
+              .replace(" - mp4", "");
+            nl.push({
+              src: e.attribs.href,
+              size: li == "HDP" ? "High Speed" : li,
+            });
           }
         });
+        await browser.close()
+        return res
+          .status(200)
+          .json({ links: nl, link, totalepisode: totalepisode });
+        })
       } catch (e) {
+        console.log(e)
         return res
           .status(404)
           .json({ links: [], link: "", totalepisode: totalepisode });
