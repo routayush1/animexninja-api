@@ -183,30 +183,66 @@ app.get("/api/watching/:id/:episode", (req, res) => {
         link = $("li.anime").children("a").attr("data-video");
         const cl = "http:" + link.replace("streaming.php", "download");
         console.log(link)
-        puppeteer.launch({ headless: true }).then(async browser => {
-          const page = await browser.newPage()
-          await page.goto(cl)
-          await page.waitForTimeout(5000)
-          let html = await page.content()
-          var $ = cheerio.load(html);
-          $("a").each((i, e) => {
-            if (e.attribs.download === "") {
-              var li = e.children[0].data
-              .slice(21)
-              .replace("(", "")
-              .replace(")", "")
-              .replace(" - mp4", "");
-            nl.push({
-              src: e.attribs.href,
-              size: li == "HDP" ? "High Speed" : li,
-            });
-          }
-        });
-        await browser.close()
-        return res
-          .status(200)
-          .json({ links: nl, link, totalepisode: totalepisode });
+        try{
+          puppeteer.launch({ headless: true }).then(async browser => {
+            const page = await browser.newPage()
+            await page.goto(cl)
+            await page.waitForTimeout(5000)
+            let html = await page.content()
+            var $ = cheerio.load(html);
+            $("a").each((i, e) => {
+              if (e.attribs.download === "") {
+                var li = e.children[0].data
+                .slice(21)
+                .replace("(", "")
+                .replace(")", "")
+                .replace(" - mp4", "");
+              nl.push({
+                src: e.attribs.href,
+                size: li == "HDP" ? "High Speed" : li,
+              });
+            }
+          });
+          return res
+            .status(200)
+            .json({ links: nl, link, totalepisode: totalepisode });
         })
+        } catch (e) {
+          await browser.close()
+          return res
+          .status(200)
+          .json({ error: e});
+        } finally {
+          await browser.close()
+        }
+        // rs(cl, (err, resp, html) => {
+        //   if (!err) {
+        //     try {
+        //       var $ = cheerio.load(html);
+        //       console.log(html)
+        //       $("a").each((i, e) => {
+        //         if (e.attribs.download === "") {
+        //           var li = e.children[0].data
+        //             .slice(21)
+        //             .replace("(", "")
+        //             .replace(")", "")
+        //             .replace(" - mp4", "");
+        //           nl.push({
+        //             src: e.attribs.href,
+        //             size: li == "HDP" ? "High Speed" : li,
+        //           });
+        //         }
+        //       });
+        //       return res
+        //         .status(200)
+        //         .json({ links: nl, link, totalepisode: totalepisode });
+        //     } catch (e) {
+        //       return res
+        //         .status(200)
+        //         .json({ links: nl, link, totalepisode: totalepisode });
+        //     }
+        //   }
+        // });
       } catch (e) {
         console.log(e)
         return res
