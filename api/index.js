@@ -183,38 +183,35 @@ app.get("/api/watching/:id/:episode", (req, res) => {
         link = $("li.anime").children("a").attr("data-video");
         const cl = "http:" + link.replace("streaming.php", "download");
         console.log(link)
-        try{
-          puppeteer.launch({ headless: true }).then(async browser => {
-            const page = await browser.newPage()
-            await page.goto(cl)
-            await page.waitForTimeout(5000)
-            let html = await page.content()
-            var $ = cheerio.load(html);
-            $("a").each((i, e) => {
-              if (e.attribs.download === "") {
-                var li = e.children[0].data
-                .slice(21)
-                .replace("(", "")
-                .replace(")", "")
-                .replace(" - mp4", "");
-              nl.push({
-                src: e.attribs.href,
-                size: li == "HDP" ? "High Speed" : li,
-              });
-            }
+        puppeteer.launch(
+          {
+            headless: true,
+            handleSIGINT: false
+          }
+        ).then(async browser => {
+        const page = await browser.newPage()
+        await page.goto(cl)
+        await page.waitForTimeout(5000)
+        let html = await page.content()
+        await browser.close()
+        var $ = cheerio.load(html);
+        $("a").each((i, e) => {
+          if (e.attribs.download === "") {
+            var li = e.children[0].data
+            .slice(21)
+            .replace("(", "")
+            .replace(")", "")
+            .replace(" - mp4", "");
+          nl.push({
+            src: e.attribs.href,
+            size: li == "HDP" ? "High Speed" : li,
           });
-          return res
-            .status(200)
-            .json({ links: nl, link, totalepisode: totalepisode });
-        })
-        } catch (e) {
-          await browser.close()
-          return res
-          .status(200)
-          .json({ error: e});
-        } finally {
-          await browser.close()
         }
+      });
+      return res
+        .status(200)
+        .json({ links: nl, link, totalepisode: totalepisode });
+      })
         // rs(cl, (err, resp, html) => {
         //   if (!err) {
         //     try {
