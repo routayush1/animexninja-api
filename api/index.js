@@ -7,7 +7,7 @@ const port = 5000;
 
 app.use(cors());
 
-const baseURL = "https://gogoanime.ai/";
+const baseURL = "https://gogoanime.pe/";
 
 app.get("/api/home", (req, res) => {
   let info = {
@@ -29,6 +29,32 @@ app.get("/api/popular/:page", (req, res) => {
     return res.status(404).json({ results });
   }
   url = `${baseURL}popular.html?page=${req.params.page}`;
+  rs(url, (error, response, html) => {
+    if (!error) {
+      try {
+        var $ = cheerio.load(html);
+        $(".img").each(function (index, element) {
+          let title = $(this).children("a").attr().title;
+          let id = $(this).children("a").attr().href.slice(10);
+          let image = $(this).children("a").children("img").attr().src;
+
+          results[index] = { title, id, image };
+        });
+        res.status(200).json({ results });
+      } catch (e) {
+        res.status(404).json({ e: "404 fuck off!!!!!" });
+      }
+    }
+  });
+});
+
+app.get("/api/newseason/:page", (req, res) => {
+  let results = [];
+  let page = req.params.page;
+  if (isNaN(page)) {
+    return res.status(404).json({ results });
+  }
+  url = `${baseURL}new-season.html?page=${req.params.page}`;
   rs(url, (error, response, html) => {
     if (!error) {
       try {
